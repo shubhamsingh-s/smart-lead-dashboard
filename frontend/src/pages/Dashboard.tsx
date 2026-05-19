@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Download, Plus, Search, LogOut, Sun, Moon } from 'lucide-react';
+import { Download, Plus, Search, LogOut, Sun, Moon, Eye, Edit } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore';
 import { useLeadStore } from '../store/useLeadStore';
 import type { Lead } from '../store/useLeadStore';
@@ -16,6 +16,8 @@ import {
   TableRow,
 } from '../components/ui/Table';
 import { AddLeadModal } from '../components/AddLeadModal';
+import { EditLeadModal } from '../components/EditLeadModal';
+import { ViewLeadModal } from '../components/ViewLeadModal';
 
 export const Dashboard: React.FC = () => {
   const { user, logout } = useAuthStore();
@@ -29,6 +31,8 @@ export const Dashboard: React.FC = () => {
   const [sortOrder, setSortOrder] = useState('Latest');
   const [page, setPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedLeadForEdit, setSelectedLeadForEdit] = useState<Lead | null>(null);
+  const [selectedLeadForView, setSelectedLeadForView] = useState<Lead | null>(null);
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
 
   useEffect(() => {
@@ -234,20 +238,38 @@ export const Dashboard: React.FC = () => {
                       </span>
                     </TableCell>
                     <TableCell className="text-right">
-                      {user?.role === 'Admin' && (
+                      <div className="flex justify-end gap-2">
                         <Button 
                           variant="ghost" 
                           size="sm" 
-                          className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/30"
-                          onClick={() => {
-                            if(window.confirm('Are you sure you want to delete this lead?')) {
-                              deleteLead(lead._id);
-                            }
-                          }}
+                          onClick={() => setSelectedLeadForView(lead)}
+                          className="text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
                         >
-                          Delete
+                          <Eye size={16} />
                         </Button>
-                      )}
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={() => setSelectedLeadForEdit(lead)}
+                          className="text-blue-500 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/30"
+                        >
+                          <Edit size={16} />
+                        </Button>
+                        {user?.role === 'Admin' && (
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/30"
+                            onClick={() => {
+                              if(window.confirm('Are you sure you want to delete this lead?')) {
+                                deleteLead(lead._id);
+                              }
+                            }}
+                          >
+                            Delete
+                          </Button>
+                        )}
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))
@@ -285,6 +307,8 @@ export const Dashboard: React.FC = () => {
       </main>
 
       <AddLeadModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <EditLeadModal isOpen={!!selectedLeadForEdit} onClose={() => setSelectedLeadForEdit(null)} lead={selectedLeadForEdit} />
+      <ViewLeadModal isOpen={!!selectedLeadForView} onClose={() => setSelectedLeadForView(null)} lead={selectedLeadForView} />
     </div>
   );
 };
