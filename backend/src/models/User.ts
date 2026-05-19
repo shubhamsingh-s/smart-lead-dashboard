@@ -33,15 +33,13 @@ const UserSchema: Schema = new Schema(
   }
 );
 
-// @ts-ignore
-UserSchema.pre('save', async function (next) {
+UserSchema.pre('save', async function () {
   const user = this as any;
   if (!user.isModified('password')) {
-    return next();
+    return;
   }
   const salt = await bcrypt.genSalt(10);
   user.password = await bcrypt.hash(user.password, salt);
-  next();
 });
 
 UserSchema.methods.comparePassword = async function (enteredPassword: string): Promise<boolean> {
