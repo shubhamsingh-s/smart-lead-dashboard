@@ -6,7 +6,8 @@ import { X } from 'lucide-react';
 import { Input } from './ui/Input';
 import { Button } from './ui/Button';
 import { Select } from './ui/Select';
-import { useLeadStore, Lead } from '../store/useLeadStore';
+import { useLeadStore } from '../store/useLeadStore';
+import type { Lead } from '../store/useLeadStore';
 
 const leadSchema = z.object({
   name: z.string().min(1, 'Name is required'),

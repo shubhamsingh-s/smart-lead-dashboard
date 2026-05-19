@@ -1,6 +1,6 @@
 import React from 'react';
 import { X, Mail, Globe, Clock, User } from 'lucide-react';
-import { Lead } from '../store/useLeadStore';
+import type { Lead } from '../store/useLeadStore';
 
 interface ViewLeadModalProps {
   isOpen: boolean;
